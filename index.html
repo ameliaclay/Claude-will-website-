@@ -180,6 +180,7 @@
  .ready__name{font-weight:700; color:var(--ink)} .ready__val{font-family:var(--serif); font-weight:600; color:var(--purple); white-space:nowrap}
  .sellbadge{position:absolute; top:9px; left:9px; z-index:2; font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; font-weight:700; color:#fff; background:var(--teal-bright); border:1.5px solid var(--teal); padding:4px 10px; border-radius:100px; box-shadow:0 6px 14px rgba(28,146,182,.3)}
  .lego.is-ready{border-color:rgba(28,146,182,.45)}
+ .controls .lab--gap{margin-left:10px}
  .legonote{margin:18px 0 0; font-size:12.5px; color:var(--faint); max-width:70ch}
 </style></head>
 <body>
@@ -258,6 +259,12 @@
     <button data-sort="value" class="on">Most valuable</button>
     <button data-sort="retire">Retirement date</button>
    </div>
+   <span class="lab lab--gap">Show</span>
+   <div class="seg" id="legofilter">
+    <button data-show="all" class="on">All</button>
+    <button data-show="retired">Retired (6)</button>
+    <button data-show="instores">In stores (5)</button>
+   </div>
   </div>
   <div class="famhead"><h3>Current inventory</h3><span class="fc">11 sets · 19 boxes</span><span class="fv">$2,495–$3,220</span></div>
   <div class="legogrid" id="legoOut"></div>
@@ -282,7 +289,7 @@ const LEGO=[{"num":"10252","name":"Volkswagen Beetle","qty":1,"lo":120,"hi":145,
  {"num":"76304","name":"Batman Forever Batmobile","qty":4,"lo":75,"hi":85,"retired":false,"retire":"Dec 2026","retireKey":"2026-12","sellFrom":2028,"sellTo":2029,"sell":"Holiday 2028 to 2029","note":"Purchased at $79.99 each"},
  {"num":"10300","name":"Back to the Future DeLorean","qty":2,"lo":125,"hi":160,"retired":false,"retire":"end of 2026","retireKey":"2026-12","sellFrom":2028,"sellTo":2029,"sell":"Holiday 2028 to 2029","note":"One purchased at $139.89","chip":["confirm","Arrival and seals to confirm"]}];
 (function(){
-  var out=document.getElementById('legoOut'), mode='value';
+  var out=document.getElementById('legoOut'), mode='value', show='all';
   var now=new Date(), yr=now.getFullYear(), mo=now.getMonth();
   function $(n){return '$'+n.toLocaleString('en-US');}
   function inWindow(s){return yr>=s.sellFrom && yr<=s.sellTo;}
@@ -300,7 +307,7 @@ const LEGO=[{"num":"10252","name":"Volkswagen Beetle","qty":1,"lo":120,"hi":145,
       (s.chip?'<span class="lego__chip '+s.chip[0]+'">'+s.chip[1]+'</span>':'')+'</article>';
   }
   function sorted(){
-    var c=LEGO.slice();
+    var c=LEGO.filter(function(s){return show==='all'||(show==='retired')===s.retired;});
     if(mode==='value') c.sort(function(a,b){return b.hi*b.qty-a.hi*a.qty;});
     if(mode==='retire') c.sort(function(a,b){return a.retireKey.localeCompare(b.retireKey)||b.hi*b.qty-a.hi*a.qty;});
     if(mode==='sell') c.sort(function(a,b){return a.sellFrom-b.sellFrom||a.sellTo-b.sellTo||b.hi*b.qty-a.hi*a.qty;});
@@ -319,6 +326,10 @@ const LEGO=[{"num":"10252","name":"Volkswagen Beetle","qty":1,"lo":120,"hi":145,
   document.querySelectorAll('#legosort button').forEach(function(b){b.addEventListener('click',function(){
     document.querySelectorAll('#legosort button').forEach(function(x){x.classList.remove('on');});
     b.classList.add('on'); mode=b.dataset.sort; render();
+  });});
+  document.querySelectorAll('#legofilter button').forEach(function(b){b.addEventListener('click',function(){
+    document.querySelectorAll('#legofilter button').forEach(function(x){x.classList.remove('on');});
+    b.classList.add('on'); show=b.dataset.show; render();
   });});
   render();
 })();
