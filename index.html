@@ -294,7 +294,7 @@ render();
 </div>
 <div id="yt-audio" aria-hidden="true"></div>
 <script>
-/* rotating hello — new phrase every 48h */
+/* rotating hello: a different phrase on every visit */
 (function(){
   var HELLOS=[
     ["knock knock,","it's vinyl o'clock"],
@@ -316,10 +316,11 @@ render();
     ["clemenza's sunday sauce,","simmering on the stove"],
     ["captain P, it's 9am,","time to hit Costco before the MBs"]
   ];
-  var P=24*60*60*1000;
-  var ANCHOR=new Date('2026-07-28T00:00:00Z').getTime();
-  var idx=Math.floor((Date.now()-ANCHOR)/P)%HELLOS.length;
-  if(idx<0) idx+=HELLOS.length;
+  var last=-1;
+  try{ last=parseInt(localStorage.getItem('helloIdx'),10); }catch(e){}
+  var idx=Math.floor(Math.random()*(HELLOS.length-1));
+  if(idx>=last && last>=0 && last<HELLOS.length) idx++;
+  try{ localStorage.setItem('helloIdx', idx); }catch(e){}
   var H=HELLOS[idx];
   var el=document.getElementById("hero-line");
   if(el) el.innerHTML=H[0]+"<br><em>"+H[1]+"</em>";
