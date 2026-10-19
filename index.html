@@ -219,7 +219,7 @@
   <div class="tabpanel" id="panel-lego" role="tabpanel" aria-labelledby="tab-lego" hidden>
   <section class="lego-hero">
    <p class="eyebrow">Will Z's Lego Collection</p>
-   <h1>Sealed sets,<br><em>built to hold</em></h1>
+   <h1 id="lego-line">Never built,<br><em>always appreciated</em></h1>
    <p class="lede">Lego investment inventory, kept in the box. 11 sets across 19 boxes.</p>
    <div class="stamp"><span class="dot"></span>Updated October 16, 2026</div>
   </section>
@@ -324,6 +324,28 @@ render();
   var H=HELLOS[idx];
   var el=document.getElementById("hero-line");
   if(el) el.innerHTML=H[0]+"<br><em>"+H[1]+"</em>";
+})();
+
+/* Lego headline: a different joke on every visit */
+(function(){
+  var LINES=[
+    ["never built,","always appreciated"],
+    ["do not open,","this is a retirement plan"],
+    ["some people buy stocks,","Will buys bricks"],
+    ["look,","but do not touch"],
+    ["step on these","and you lose money"],
+    ["built different,","by never being built"],
+    ["the only bricks","that pay rent"],
+    ["still in the box,","still going up"],
+    ["plastic bricks,","serious portfolio"]
+  ];
+  var last=-1;
+  try{ last=parseInt(localStorage.getItem('legoIdx'),10); }catch(e){}
+  var idx=Math.floor(Math.random()*(LINES.length-1));
+  if(idx>=last && last>=0 && last<LINES.length) idx++;
+  try{ localStorage.setItem('legoIdx', idx); }catch(e){}
+  var el=document.getElementById("lego-line");
+  if(el) el.innerHTML=LINES[idx][0]+"<br><em>"+LINES[idx][1]+"</em>";
 })();
 
 /* Sade — No Ordinary Love (official Epic upload via YouTube) */
