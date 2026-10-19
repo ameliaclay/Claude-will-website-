@@ -363,6 +363,44 @@ render();
 
 </script>
 <!-- 100% privacy-first analytics -->
+<script>
+/* Simple Analytics custom events: queue calls until the script loads */
+window.sa_event=window.sa_event||function(){var a=[].slice.call(arguments);window.sa_event.q?window.sa_event.q.push(a):window.sa_event.q=[a];};
+(function(){
+  var once={};
+  function track(name, single){
+    if(single){ if(once[name]) return; once[name]=1; }
+    try{ window.sa_event(name); }catch(e){}
+  }
+  /* personal links: ?from=will remembers this device as Will's, then every visit logs will_visit */
+  var who=null;
+  try{
+    var qs=new URLSearchParams(location.search), from=qs.get('from');
+    if(from){ localStorage.setItem('saWho', from.toLowerCase()); qs.delete('from');
+      history.replaceState(null,'',location.pathname+(qs.toString()?'?'+qs:'')+location.hash); }
+    who=localStorage.getItem('saWho');
+  }catch(e){}
+  if(who) track(who+'_visit');
+  if(location.hash==='#lego') track('opened_lego_link');
+  document.addEventListener('click', function(e){
+    var t=e.target.closest ? e.target : null; if(!t) return;
+    var el;
+    if((el=t.closest('.tabs [data-tab]'))) track('tab_'+el.dataset.tab);
+    else if(t.closest('#playbtn')) track('play_button');
+    else if(t.closest('.rec__frame')) track('record_photo_opened');
+    else if(t.closest('#guideToggle')) track('sell_guide_opened', true);
+    else if((el=t.closest('#sortseg button'))) track('records_sort_'+el.dataset.sort);
+    else if(t.closest('#grp')) track('records_group_by_family');
+    else if((el=t.closest('#legosort button'))) track('lego_sort_'+el.dataset.sort);
+    else if((el=t.closest('#legofilter button'))) track('lego_show_'+el.dataset.show);
+  });
+  /* the hidden "I love you" in the footer */
+  document.addEventListener('selectionchange', function(){
+    var s=window.getSelection && window.getSelection(), n=document.querySelector('.secret');
+    if(s && n && !s.isCollapsed && s.containsNode(n, true)) track('secret_message_found', true);
+  });
+})();
+</script>
 <script data-collect-dnt="true" async src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
 
 <noscript><img src="https://queue.simpleanalyticscdn.com/noscript.gif?collect-dnt=true" alt="" referrerpolicy="no-referrer-when-downgrade"/></noscript>
