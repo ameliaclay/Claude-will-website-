@@ -126,9 +126,37 @@
  .lightbox__meta p{margin:4px 0 0; color:var(--muted); font-size:14px}
  .lightbox__meta #lightboxFoot{color:var(--faint); font-size:12.5px; letter-spacing:.02em}
  @keyframes lbrise{from{opacity:0; transform:translateY(10px) scale(.97)} to{opacity:1; transform:none}}
+
+ .tabs{display:inline-flex; background:var(--panel); border:1px solid var(--line); border-radius:100px; padding:4px; margin-top:22px; box-shadow:0 10px 24px -18px rgba(70,45,110,.35)}
+ .tabs button{font-family:var(--serif); font-size:14px; font-weight:600; color:var(--muted); background:none; border:0; padding:9px 20px; border-radius:100px; cursor:pointer; transition:.2s}
+ .tabs button:hover{color:var(--ink)} .tabs button[aria-selected="true"]{background:var(--purple); color:#fff}
+ .tabpanel[hidden]{display:none}
+
+ .lego-hero{padding:clamp(32px,6vw,68px) 0 clamp(24px,3vw,36px)}
+ .lego-hero .lede{max-width:46ch}
+ .legogrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:18px; padding-bottom:10px}
+ .lego{position:relative; background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:18px 18px 16px; box-shadow:0 12px 26px -18px rgba(70,45,110,.28); animation:rise .55s both; display:flex; flex-direction:column; gap:6px}
+ .lego__top{display:flex; align-items:center; justify-content:space-between; gap:10px}
+ .lego__num{font-family:var(--serif); font-size:13px; font-weight:600; color:var(--teal); letter-spacing:.02em}
+ .lego .pill{position:static}
+ .lego__name{font-size:15px; font-weight:700; color:var(--ink); line-height:1.3}
+ .lego__note{font-size:12.5px; color:var(--muted); line-height:1.45}
+ .lego__chip{align-self:flex-start; margin-top:4px; font-size:10.5px; letter-spacing:.04em; font-weight:700; padding:2px 8px; border-radius:100px; white-space:nowrap}
+ .lego__chip.confirm{color:var(--purple); background:var(--purple-soft)}
+ .lego__chip.ret{color:#9a4a12; background:#fbe9d9}
+ .lego__chip.sold{color:var(--muted); background:#eee9e2}
+ .lego.is-sold{background:var(--panel-2); box-shadow:none}
+ .lego.is-sold .lego__name{color:var(--ink-soft)}
+ @media (max-width:780px){.lego-stats .stat:last-child{grid-column:1/-1}}
+ .legonote{margin:18px 0 0; font-size:12.5px; color:var(--faint); max-width:70ch}
 </style></head>
 <body>
  <div class="wrap">
+  <nav class="tabs" role="tablist" aria-label="Collections">
+   <button type="button" role="tab" id="tab-records" aria-controls="panel-records" aria-selected="true" data-tab="records">Records</button>
+   <button type="button" role="tab" id="tab-lego" aria-controls="panel-lego" aria-selected="false" data-tab="lego" tabindex="-1">Lego sets</button>
+  </nav>
+  <div class="tabpanel" id="panel-records" role="tabpanel" aria-labelledby="tab-records">
   <section class="hero">
    <div>
     <p class="eyebrow">Will Z's Record Collection</p>
@@ -172,6 +200,41 @@
    </div>
    </div>
   </section>
+  </div>
+  <div class="tabpanel" id="panel-lego" role="tabpanel" aria-labelledby="tab-lego" hidden>
+  <section class="lego-hero">
+   <p class="eyebrow">Will Z's Lego Collection</p>
+   <h1>Sealed sets,<br><em>built to hold</em></h1>
+   <p class="lede">Lego investment inventory, kept in the box.</p>
+   <div class="stamp"><span class="dot"></span>Updated October 16, 2026</div>
+  </section>
+  <div class="stats lego-stats">
+   <div class="stat"><b>12</b><span>Unique sets</span></div>
+   <div class="stat"><b class="pp">17</b><span>Boxes incl. planned returns</span></div>
+   <div class="stat"><b class="tt">11 sets · 14 boxes</b><span>Active after returns</span></div>
+  </div>
+  <div class="famhead"><h3>Current inventory</h3><span class="fc">12 sets</span></div>
+  <div class="legogrid">
+   <article class="lego"><div class="lego__top"><span class="lego__num">#10252</span><span class="pill">&times;1</span></div><span class="lego__name">Volkswagen Beetle</span></article>
+   <article class="lego"><div class="lego__top"><span class="lego__num">#10274</span><span class="pill">&times;1</span></div><span class="lego__name">Ghostbusters ECTO-1</span></article>
+   <article class="lego"><div class="lego__top"><span class="lego__num">#10295</span><span class="pill">&times;1</span></div><span class="lego__name">Porsche 911</span></article>
+   <article class="lego"><div class="lego__top"><span class="lego__num">#42125</span><span class="pill">&times;1</span></div><span class="lego__name">Ferrari 488 GTE</span></article>
+   <article class="lego"><div class="lego__top"><span class="lego__num">#75257</span><span class="pill">&times;1</span></div><span class="lego__name">Star Wars Millennium Falcon</span></article>
+   <article class="lego"><div class="lego__top"><span class="lego__num">#21332</span><span class="pill">&times;1</span></div><span class="lego__name">LEGO Ideas The Globe</span></article>
+   <article class="lego"><div class="lego__top"><span class="lego__num">#10391</span><span class="pill">&times;1</span></div><span class="lego__name">Pharrell Williams Over the Moon</span></article>
+   <article class="lego"><div class="lego__top"><span class="lego__num">#43018</span><span class="pill">&times;1</span></div><span class="lego__name">Lionel Messi Celebration</span></article>
+   <article class="lego"><div class="lego__top"><span class="lego__num">#42210</span><span class="pill">&times;1</span></div><span class="lego__name">Fast &amp; Furious Nissan Skyline</span></article>
+   <article class="lego"><div class="lego__top"><span class="lego__num">#76304</span><span class="pill">&times;4</span></div><span class="lego__name">Batman Forever Batmobile</span><span class="lego__note">Purchased at $79.99 each</span></article>
+   <article class="lego"><div class="lego__top"><span class="lego__num">#10300</span><span class="pill">&times;1</span></div><span class="lego__name">Back to the Future DeLorean</span><span class="lego__note">Purchased at $139.89</span><span class="lego__chip confirm">Arrival and seals to confirm</span></article>
+   <article class="lego"><div class="lego__top"><span class="lego__num">#72160</span><span class="pill">&times;3</span></div><span class="lego__name">LEGO Pokemon Arcanine</span><span class="lego__note">Planned return, not yet confirmed</span><span class="lego__chip ret">Planned return</span></article>
+  </div>
+  <div class="famhead"><h3>Sold / not in current inventory</h3><span class="fc">2 sets</span></div>
+  <div class="legogrid">
+   <article class="lego is-sold"><div class="lego__top"><span class="lego__num">#10284</span></div><span class="lego__name">Camp Nou</span><span class="lego__chip sold">Sold</span></article>
+   <article class="lego is-sold"><div class="lego__top"><span class="lego__num">#10262</span></div><span class="lego__name">James Bond Aston Martin DB5</span><span class="lego__chip sold">Sold</span></article>
+  </div>
+  <p class="legonote">Quantity 1 is assumed for the original photographed sets unless otherwise confirmed.</p>
+  </div>
   <footer>
    <span class="made">a little something <b>made by Milli</b> <span class="heart">♥</span> 🔮</span>
   </footer>
@@ -343,6 +406,29 @@ render();
   });
   scrim.addEventListener('click', close);
   closeBtn.addEventListener('click', close);
+})();
+
+/* Records / Lego tabs (#lego opens the Lego tab directly) */
+(function(){
+  var tabs=[].slice.call(document.querySelectorAll('.tabs [role="tab"]'));
+  function show(name, push){
+    tabs.forEach(function(t){
+      var on=t.dataset.tab===name;
+      t.setAttribute('aria-selected', on?'true':'false');
+      t.tabIndex=on?0:-1;
+      document.getElementById(t.getAttribute('aria-controls')).hidden=!on;
+    });
+    if(push) history.replaceState(null,'',name==='records'?location.pathname+location.search:'#'+name);
+  }
+  tabs.forEach(function(t,i){
+    t.addEventListener('click', function(){ show(t.dataset.tab, true); });
+    t.addEventListener('keydown', function(e){
+      if(e.key!=='ArrowRight' && e.key!=='ArrowLeft') return;
+      var n=tabs[(i+(e.key==='ArrowRight'?1:tabs.length-1))%tabs.length];
+      n.focus(); show(n.dataset.tab, true);
+    });
+  });
+  if(location.hash==='#lego') show('lego', false);
 })();
 </script>
 </body></html>
