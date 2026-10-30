@@ -385,6 +385,21 @@ window.sa_event=window.sa_event||function(){var a=[].slice.call(arguments);windo
     who=localStorage.getItem('saWho');
   }catch(e){}
   if(who) track(who+'_visit');
+  /* visit alert: posts to the hidden Netlify form "visit", which emails Milli */
+  try{
+    var lastAlert=+localStorage.getItem('visitAlert')||0;
+    if(who!=='milli' && location.hostname.indexOf('netlify.app')>-1 && Date.now()-lastAlert>30*60*1000){
+      localStorage.setItem('visitAlert', Date.now());
+      var body=new URLSearchParams({
+        'form-name':'visit',
+        who: who==='will'?'Will':'Someone',
+        page: location.hash==='#lego'?'Lego tab':'Records tab',
+        device: /Mobi|iPhone|Android/i.test(navigator.userAgent)?'phone':'computer',
+        time: new Date().toLocaleString('en-US',{timeZone:'America/Chicago'})+' (Austin time)'
+      });
+      fetch('/', {method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body:body.toString(), keepalive:true}).catch(function(){});
+    }
+  }catch(e){}
   if(location.hash==='#lego') track('opened_lego_link');
   document.addEventListener('click', function(e){
     var t=e.target.closest ? e.target : null; if(!t) return;
@@ -420,6 +435,9 @@ window.sa_event=window.sa_event||function(){var a=[].slice.call(arguments);windo
   </div>
  </div>
 </div>
+<form name="visit" data-netlify="true" netlify-honeypot="bot-field" hidden>
+ <input name="bot-field"><input name="who"><input name="page"><input name="device"><input name="time">
+</form>
 <div id="yt-audio" aria-hidden="true"></div>
 <script>
 /* rotating hello: a different phrase on every visit */
