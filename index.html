@@ -392,9 +392,7 @@ window.sa_event=window.sa_event||function(){var a=[].slice.call(arguments);windo
       localStorage.setItem('visitAlert', Date.now());
       var body=new URLSearchParams({
         'form-name':'visit',
-        who: who==='will'?'Will':'Someone',
-        page: location.hash==='#lego'?'Lego tab':'Records tab',
-        device: /Mobi|iPhone|Android/i.test(navigator.userAgent)?'phone':'computer',
+        visit: 'Someone just visited the site',
         time: new Date().toLocaleString('en-US',{timeZone:'America/Chicago'})+' (Austin time)'
       });
       fetch('/', {method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body:body.toString(), keepalive:true}).catch(function(){});
@@ -436,7 +434,7 @@ window.sa_event=window.sa_event||function(){var a=[].slice.call(arguments);windo
  </div>
 </div>
 <form name="visit" data-netlify="true" netlify-honeypot="bot-field" hidden>
- <input name="bot-field"><input name="who"><input name="page"><input name="device"><input name="time">
+ <input name="bot-field"><input name="visit"><input name="time">
 </form>
 <div id="yt-audio" aria-hidden="true"></div>
 <script>
