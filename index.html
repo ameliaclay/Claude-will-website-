@@ -232,6 +232,22 @@ window.sa_event=window.sa_event||function(){var a=[].slice.call(arguments);windo
  .lego.is-ready{border-color:rgba(28,146,182,.45)}
  .controls .lab--gap{margin-left:10px}
  .lego__img--emoji{font-size:64px; line-height:1; background:linear-gradient(135deg, var(--teal-soft), var(--purple-soft))}
+ .addbtn{font-family:var(--cereal); font-size:13px; font-weight:700; color:var(--purple); background:var(--purple-soft); border:1px solid rgba(78,40,153,.25); padding:8px 15px; border-radius:100px; cursor:pointer}
+ .addbtn:hover{background:#e4d9f8} .addbtn--push{margin-left:auto} .addbtn[hidden]{display:none}
+ .adddlg{border:0; padding:0; border-radius:16px; width:min(520px,92vw); background:var(--panel); color:var(--ink); box-shadow:0 40px 80px -20px rgba(10,6,20,.55)}
+ .adddlg::backdrop{background:rgba(20,14,28,.6); backdrop-filter:blur(3px)}
+ .adddlg form{padding:24px; display:grid; gap:12px}
+ .adddlg h3{margin:0; font-family:var(--serif); font-weight:600; font-size:21px}
+ .adddlg .hint{margin:-4px 0 4px; font-size:13px; color:var(--muted)}
+ .adddlg label{display:grid; gap:4px; font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--faint)}
+ .adddlg input,.adddlg textarea{font:inherit; font-size:15px; text-transform:none; letter-spacing:0; font-weight:500; color:var(--ink); background:#fff; border:1px solid var(--line); border-radius:10px; padding:10px 12px}
+ .adddlg textarea{min-height:150px; font-size:13px; line-height:1.45; resize:vertical}
+ .adddlg .row{display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr); gap:10px}
+ .adddlg form > *, .adddlg label{min-width:0} .adddlg input,.adddlg textarea{width:100%}
+ .adddlg #addLego,.adddlg #addRec{display:grid; gap:12px} #addLego[hidden],#addRec[hidden]{display:none}
+ .adddlg .acts{display:flex; flex-wrap:wrap; gap:8px; justify-content:flex-end; margin-top:4px}
+ .adddlg .acts button,.adddlg .acts a{font:inherit; font-size:14px; font-weight:700; border-radius:100px; padding:10px 16px; cursor:pointer; text-decoration:none; border:1px solid var(--line); background:var(--panel); color:var(--ink-soft)}
+ .adddlg .acts .go{background:var(--purple); color:#fff; border-color:var(--purple)}
  .legonote{margin:18px 0 0; font-size:12.5px; color:var(--faint); max-width:70ch}
 </style></head>
 <body>
@@ -270,6 +286,7 @@ window.sa_event=window.sa_event||function(){var a=[].slice.call(arguments);windo
     <button data-sort="age">Oldest first</button>
    </div>
    <label class="toggle"><input type="checkbox" id="grp"> Group by family</label>
+   <button class="addbtn" type="button" data-add="record" hidden>+ Add record</button>
   </div>
   <div id="out"></div>
   <section class="guide">
@@ -316,6 +333,7 @@ window.sa_event=window.sa_event||function(){var a=[].slice.call(arguments);windo
     <button data-show="retired">Retired (<span id="legoNRet">6</span>)</button>
     <button data-show="instores">In stores (<span id="legoNIn">5</span>)</button>
    </div>
+   <button class="addbtn addbtn--push" type="button" data-add="lego" hidden>+ Add Lego</button>
   </div>
   <div class="famhead"><h3>Current inventory</h3><span class="fc" id="legoHeadCount">11 sets · 19 boxes</span><span class="fv" id="legoHeadValue">$2,525–$3,260</span></div>
   <div class="legogrid" id="legoOut"></div>
@@ -433,6 +451,26 @@ render();
 <script data-collect-dnt="true" async src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
 
 <noscript><img src="https://queue.simpleanalyticscdn.com/noscript.gif?collect-dnt=true" alt="" referrerpolicy="no-referrer-when-downgrade"/></noscript>
+<dialog class="adddlg" id="addDlg" aria-labelledby="addTitle">
+ <form method="dialog">
+  <h3 id="addTitle">Add to the collection</h3>
+  <p class="hint" id="addHint"></p>
+  <div id="addLego">
+   <div class="row"><label>Set number<input id="aNum" inputmode="numeric" placeholder="10316"></label><label>Boxes<input id="aQty" type="number" min="1" value="1"></label></div>
+   <label>Set name (optional)<input id="aName" placeholder="Rivendell"></label>
+  </div>
+  <div id="addRec">
+   <label>Artist or composer<input id="aArtist" placeholder="Bob Marley"></label>
+   <div class="row"><label>Album<input id="aAlbum" placeholder="Legend"></label><label>Year<input id="aYear" inputmode="numeric" placeholder="1984"></label></div>
+  </div>
+  <label>Prompt for Claude Code<textarea id="aPrompt" readonly></textarea></label>
+  <div class="acts">
+   <button value="cancel">Close</button>
+   <a href="https://claude.ai/code" target="_blank" rel="noopener">Open Claude Code</a>
+   <button type="button" class="go" id="aCopy">Copy prompt</button>
+  </div>
+ </form>
+</dialog>
 <div class="lightbox" id="lightbox" aria-hidden="true">
  <div class="lightbox__scrim" id="lightboxScrim"></div>
  <div class="lightbox__panel" role="dialog" aria-modal="true" aria-label="Record detail">
@@ -625,6 +663,39 @@ render();
   });
   if(location.hash==='#lego') show('lego', false);
   window.addEventListener('hashchange', function(){ show(location.hash==='#lego'?'lego':'records', false); });
+})();
+
+/* "+ Add" buttons: only on Will's and Milli's tagged devices; they build a prompt for Claude Code */
+(function(){
+  var who=null; try{ who=localStorage.getItem('saWho'); }catch(e){}
+  if(who!=='will' && who!=='milli') return;
+  var dlg=document.getElementById('addDlg'); if(!dlg || !dlg.showModal) return;
+  var kind='lego', $=function(id){return document.getElementById(id);};
+  var BASE='Read CLAUDE.md first. Work on the branch claude/lego-sets-inventory-tab-433xtc and push your changes to that same branch so Netlify publishes them. Look up current values (and retirement dates for Lego) for anything new, follow the style rules, and check the page before pushing.\n\n';
+  function v(id){return $(id).value.trim();}
+  function build(){
+    var line;
+    if(kind==='lego'){
+      var q=Math.max(1,parseInt(v('aQty'),10)||1);
+      line='Add this to my collection: Lego set '+(v('aNum')||'[set number]')+(v('aName')?' '+v('aName'):'')+', '+q+(q===1?' box.':' boxes.');
+    } else {
+      line='Add this record: '+(v('aArtist')||'[artist]')+', '+(v('aAlbum')||'[album]')+(v('aYear')?' ('+v('aYear')+')':'')+'. The cover photo is attached.';
+    }
+    $('aPrompt').value=BASE+line;
+  }
+  function open(k){
+    kind=k; $('addLego').hidden=k!=='lego'; $('addRec').hidden=k==='lego';
+    $('addHint').textContent=k==='lego'?'The box photo is added automatically from the set number.':'Attach a photo of the cover when you paste this into Claude Code.';
+    build(); dlg.showModal();
+  }
+  ['aNum','aQty','aName','aArtist','aAlbum','aYear'].forEach(function(id){$(id).addEventListener('input',build);});
+  $('aCopy').addEventListener('click',function(){
+    var t=$('aPrompt'), b=this;
+    function done(){ b.textContent='Copied!'; setTimeout(function(){b.textContent='Copy prompt';},1600); }
+    if(navigator.clipboard) navigator.clipboard.writeText(t.value).then(done,function(){t.select(); document.execCommand('copy'); done();});
+    else { t.select(); document.execCommand('copy'); done(); }
+  });
+  document.querySelectorAll('.addbtn').forEach(function(b){ b.hidden=false; b.addEventListener('click',function(){open(b.dataset.add);}); });
 })();
 </script>
 </body></html>

@@ -8,6 +8,10 @@ A one-page site (records + Lego) hosted on Netlify at https://willsrecords.netli
 - Always commit and push to **that branch**. A push to any other branch does not go live.
 - There is no build step: `index.html` is the whole site (plus `og.png` and `forms.html`).
 
+## The "+ Add" buttons
+
+On Will's and Milli's tagged devices (opened once with `?from=will` or `?from=milli`), each tab shows a hidden "+ Add" button. It only builds a prompt to paste into Claude Code; it never changes the site by itself.
+
 ## Adding a Lego set
 
 Lego cards render from the `const LEGO=[...]` array in `index.html` (inside the Lego tab panel). Add one object per set:
