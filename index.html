@@ -258,9 +258,9 @@ window.sa_event=window.sa_event||function(){var a=[].slice.call(arguments);windo
    </div>
   </section>
   <div class="stats">
-   <div class="stat"><b>94</b><span>Records</span></div>
-   <div class="stat"><b class="pp">$886–$1,873</b><span>Est. total value</span></div>
-   <div class="stat"><b class="tt">19</b><span>Families</span></div>
+   <div class="stat"><b id="recCount">94</b><span>Records</span></div>
+   <div class="stat"><b class="pp" id="recValue">$886–$1,873</b><span>Est. total value</span></div>
+   <div class="stat"><b class="tt" id="recFams">19</b><span>Families</span></div>
    </div>
   <div class="controls">
    <span class="lab">Sort</span>
@@ -292,12 +292,12 @@ window.sa_event=window.sa_event||function(){var a=[].slice.call(arguments);windo
   <section class="lego-hero">
    <p class="eyebrow">Will Z's Lego Collection</p>
    <h1 id="lego-line">Never built,<br><em>always appreciated</em></h1>
-   <p class="lede">Lego investment inventory, kept in the box. 11 sets across 19 boxes.</p>
+   <p class="lede">Lego investment inventory, kept in the box. <span id="legoLede">11 sets across 19 boxes</span>.</p>
    <div class="stamp"><span class="dot"></span>Prices updated November 1, 2026</div>
   </section>
   <div class="stats lego-stats">
-   <div class="stat"><b>11 sets · 19 boxes</b><span>In the collection</span></div>
-   <div class="stat"><b class="pp">$2,525–$3,260</b><span>Est. total value</span></div>
+   <div class="stat"><b id="legoStatCount">11 sets · 19 boxes</b><span>In the collection</span></div>
+   <div class="stat"><b class="pp" id="legoStatValue">$2,525–$3,260</b><span>Est. total value</span></div>
    <div class="stat"><b class="tt">$1,478</b><span>Sold to date</span></div>
   </div>
   <section class="ready" id="legoReady" hidden>
@@ -313,11 +313,11 @@ window.sa_event=window.sa_event||function(){var a=[].slice.call(arguments);windo
    <span class="lab lab--gap">Show</span>
    <div class="seg" id="legofilter">
     <button data-show="all" class="on">All</button>
-    <button data-show="retired">Retired (6)</button>
-    <button data-show="instores">In stores (5)</button>
+    <button data-show="retired">Retired (<span id="legoNRet">6</span>)</button>
+    <button data-show="instores">In stores (<span id="legoNIn">5</span>)</button>
    </div>
   </div>
-  <div class="famhead"><h3>Current inventory</h3><span class="fc">11 sets · 19 boxes</span><span class="fv">$2,525–$3,260</span></div>
+  <div class="famhead"><h3>Current inventory</h3><span class="fc" id="legoHeadCount">11 sets · 19 boxes</span><span class="fv" id="legoHeadValue">$2,525–$3,260</span></div>
   <div class="legogrid" id="legoOut"></div>
   <div class="famhead"><h3>Sold</h3><span class="fc">7 items</span><span class="fv">$1,478 in sales</span></div>
   <div class="legogrid">
@@ -387,6 +387,13 @@ const LEGO=[{"num":"10252","name":"Volkswagen Beetle","qty":1,"lo":125,"hi":175,
     b.classList.add('on'); show=b.dataset.show; render();
   });});
   render();
+  /* counts and totals are worked out from LEGO, so adding a set updates them */
+  var nSets=LEGO.length, nBoxes=0, tLo=0, tHi=0, nRet=0;
+  LEGO.forEach(function(s){nBoxes+=s.qty; tLo+=s.lo*s.qty; tHi+=s.hi*s.qty; if(s.retired) nRet++;});
+  var cnt=nSets+(nSets===1?' set':' sets')+' · '+nBoxes+(nBoxes===1?' box':' boxes'), val=$(tLo)+'–'+$(tHi);
+  function set(id,t){var e=document.getElementById(id); if(e) e.textContent=t;}
+  set('legoStatCount',cnt); set('legoHeadCount',cnt); set('legoStatValue',val); set('legoHeadValue',val);
+  set('legoLede',nSets+' sets across '+nBoxes+' boxes'); set('legoNRet',nRet); set('legoNIn',nSets-nRet);
 })();
 </script>
   </div>
@@ -415,6 +422,11 @@ function render(){
 document.querySelectorAll('#sortseg button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#sortseg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');sortMode=b.dataset.sort;render();}));
 document.getElementById('grp').addEventListener('change',e=>{grouped=e.target.checked;render();});
 render();
+/* header stats are worked out from REC, so adding a record updates them */
+(function(){const lo=REC.reduce((s,r)=>s+(r.lo||0),0),hi=REC.reduce((s,r)=>s+(r.hi||0),0),f=n=>'$'+n.toLocaleString('en-US');
+ document.getElementById('recCount').textContent=REC.length;
+ document.getElementById('recValue').textContent=f(lo)+'–'+f(hi);
+ document.getElementById('recFams').textContent=new Set(REC.map(r=>r.fam)).size;})();
 
 </script>
 <!-- 100% privacy-first analytics -->
