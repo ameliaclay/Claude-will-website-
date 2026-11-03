@@ -37,7 +37,7 @@ window.sa_event=window.sa_event||function(){var a=[].slice.call(arguments);windo
       localStorage.setItem('visitAlert', Date.now());
       var body=new URLSearchParams({
         'form-name':'visit',
-        visit: 'Someone just visited the site',
+        visit: who==='will' ? 'Will just visited the site' : 'Someone just visited the site',
         time: new Date().toLocaleString('en-US',{timeZone:'America/Chicago'})+' (Austin time)'
       });
       fetch('/', {method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body:body.toString(), keepalive:true}).catch(function(){});
