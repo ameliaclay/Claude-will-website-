@@ -31,7 +31,9 @@ window.sa_event=window.sa_event||function(){var a=[].slice.call(arguments);windo
   /* visit alert: posts to the hidden Netlify form "visit", which emails Milli */
   try{
     var lastAlert=+localStorage.getItem('visitAlert')||0;
-    if(who!=='milli' && location.hostname.indexOf('netlify.app')>-1 && Date.now()-lastAlert>30*60*1000){
+    /* skip robots: Netlify loads the site in an automated browser after every deploy */
+    var robot=navigator.webdriver || /HeadlessChrome|bot|crawl|spider|preview/i.test(navigator.userAgent);
+    if(!robot && who!=='milli' && location.hostname.indexOf('netlify.app')>-1 && Date.now()-lastAlert>30*60*1000){
       localStorage.setItem('visitAlert', Date.now());
       var body=new URLSearchParams({
         'form-name':'visit',
