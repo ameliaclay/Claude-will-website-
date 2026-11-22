@@ -68,7 +68,7 @@ window.sa_event=window.sa_event||function(){var a=[].slice.call(arguments);windo
 })();
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Sora:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <style>
  :root{
   --bg:#fbf8f2; --panel:#fffdf9; --panel-2:#fbf6ee;
@@ -256,6 +256,87 @@ window.sa_event=window.sa_event||function(){var a=[].slice.call(arguments);windo
  .adddlg .acts button,.adddlg .acts a{font:inherit; font-size:14px; font-weight:700; border-radius:100px; padding:10px 16px; cursor:pointer; text-decoration:none; border:1px solid var(--line); background:var(--panel); color:var(--ink-soft)}
  .adddlg .acts .go{background:var(--purple); color:#fff; border-color:var(--purple)}
  .legonote{margin:18px 0 0; font-size:12.5px; color:var(--faint); max-width:70ch}
+ /* ===== 2026 editorial refresh (overrides above) ===== */
+ :root{--bg:#f6f4ef; --panel:#f6f4ef; --panel-2:#efece5; --ink:#17141c; --ink-soft:#3d3845; --muted:#6f6977; --faint:#9c96a3;
+  --line:rgba(23,20,28,.12); --display:'Instrument Serif', 'Times New Roman', serif}
+ body{background:var(--bg); background-image:none; letter-spacing:-.01em}
+ body::before{display:none}
+ .wrap{max-width:1320px; padding:0 clamp(18px,4vw,48px)}
+ .topbar{padding:20px 0 16px}
+ .mark{font-family:var(--cereal); font-size:13px; font-weight:500; letter-spacing:.02em; text-transform:uppercase} .mark b{color:var(--ink); font-weight:700}
+ .tabs button{font-family:var(--cereal); font-size:13px; font-weight:500; letter-spacing:.02em; text-transform:uppercase}
+ .tabs button::after{height:1px; bottom:-17px; background:var(--ink)}
+ .hero{grid-template-columns:1.3fr .7fr; gap:clamp(32px,6vw,90px); align-items:end; padding:clamp(48px,9vw,120px) 0 clamp(36px,5vw,64px)}
+ .eyebrow{font-size:11px; letter-spacing:.22em; color:var(--muted); font-weight:500; margin-bottom:28px}
+ .eyebrow::before{background:var(--ink); opacity:.4}
+ h1{font-family:var(--display); font-weight:400; font-size:clamp(60px,10.5vw,148px); line-height:.9; letter-spacing:-.025em; margin-bottom:28px}
+ h1 em{color:var(--purple); font-style:italic}
+ h1{overflow-wrap:anywhere}
+ .lede{font-size:clamp(15px,1.4vw,17px); color:var(--muted); max-width:38ch}
+ .vinyl{width:min(320px,70vw); filter:none}
+ .spin__tag{background:none; color:var(--muted); border:0; box-shadow:none; padding:0; top:-24px; left:0; font-weight:500}
+ .spin__cap{font-size:12px}
+ .playbtn{background:var(--ink); box-shadow:none; border-radius:100px; font-weight:600}
+ .playbtn:hover{background:var(--purple); box-shadow:none}
+ .stats{background:none; border:0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); border-radius:0; box-shadow:none; gap:0; margin:0 0 40px}
+ .stat{background:none; padding:22px 0}
+ .stat + .stat{padding-left:24px; border-left:1px solid var(--line)}
+ .stat b{font-family:var(--display); font-weight:400; font-size:clamp(30px,4vw,48px); letter-spacing:-.02em}
+ .stat .pp,.stat .tt{color:var(--ink)}
+ .stat span{font-size:10.5px; letter-spacing:.18em; color:var(--muted)}
+ .controls{border-top:0; padding-top:0; margin-bottom:36px}
+ .seg{background:none; border:1px solid var(--line)}
+ .seg button.on{background:var(--ink)}
+ .toggle input:checked{background:var(--ink)}
+ .famhead h3{font-family:var(--display); font-weight:400; font-size:clamp(28px,3.4vw,40px); letter-spacing:-.01em}
+ .famhead .fv{color:var(--muted); font-family:var(--cereal); font-weight:500}
+ .crate{grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:clamp(36px,4vw,56px) clamp(18px,2.4vw,32px)}
+ .rec__frame{border-radius:2px; box-shadow:none; background:var(--panel-2)}
+ .rec__frame::after{border-radius:2px; border-color:rgba(23,20,28,.06)}
+ .rec__frame img{filter:none}
+ .rec:hover .rec__frame{transform:none; box-shadow:none}
+ .rec:hover .rec__frame img{transform:scale(1.03); filter:none}
+ .rec .pill,.rec__foot{display:none}
+ figcaption{margin-top:14px; display:flex; flex-direction:column; gap:2px}
+ .rec__comp{font-family:var(--display); font-weight:400; font-size:22px; line-height:1.1; letter-spacing:-.005em}
+ .rec__work{font-size:13px; color:var(--muted)}
+ .guide{margin-top:60px; padding-top:44px}
+ .guide h2{font-family:var(--display); font-weight:400; font-size:clamp(32px,4.4vw,52px); letter-spacing:-.015em}
+ .guide__head .chev{color:var(--ink)}
+ .gcard{background:none; border:0; border-top:1px solid var(--line); border-radius:0; box-shadow:none; padding:18px 0 0}
+ .gcard h4 .k{color:var(--muted)}
+ .lightbox__scrim{background:rgba(246,244,239,.92); backdrop-filter:blur(8px)}
+ .lightbox__panel{background:transparent; box-shadow:none; padding:0; width:min(720px,92vw); border-radius:0}
+ .lightbox__panel img{border-radius:2px; box-shadow:0 30px 60px -30px rgba(23,20,28,.35)}
+ .lightbox__close{background:var(--ink); color:#fff; box-shadow:none}
+ .lightbox__meta h3{font-family:var(--display); font-weight:400; font-size:34px; letter-spacing:-.01em}
+ .lightbox__meta #lightboxFoot{font-size:15px; color:var(--ink); margin-top:10px}
+ /* Lego, same system */
+ .lego-hero{padding:clamp(48px,9vw,120px) 0 clamp(32px,4vw,52px)}
+ .legogrid{grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:clamp(28px,3vw,44px) clamp(18px,2.4vw,32px)}
+ .lego{background:none; border:0; border-top:1px solid var(--line); border-radius:0; box-shadow:none; padding:16px 0 0}
+ .lego__img{margin:0 0 10px; border-radius:2px; border:0; background:#fff}
+ .lego__num{color:var(--muted); font-family:var(--cereal); font-weight:500}
+ .lego .pill{background:none; border:0; box-shadow:none; color:var(--muted); padding:0; font-family:var(--cereal); font-weight:500}
+ .lego__name{font-family:var(--display); font-weight:400; font-size:22px; line-height:1.15}
+ .lego__val{font-family:var(--cereal); font-size:15px; font-weight:600; color:var(--ink)}
+ .lego__dates{border-top:1px solid var(--line)}
+ .lego.is-sold{background:none; opacity:.6}
+ .lego.is-ready{border-top:2px solid var(--teal)}
+ .sellbadge{background:var(--ink); border:0; box-shadow:none; font-weight:600}
+ .ready{background:none; border:0; border-top:1px solid var(--ink); border-bottom:1px solid var(--line); border-radius:0; padding:20px 0}
+ .ready__head h3{font-family:var(--display); font-weight:400; font-size:30px}
+ .ready__list li{background:none; border-radius:0; padding:10px 0; border-top:1px solid var(--line)}
+ .ready__val{font-family:var(--cereal); color:var(--ink)}
+ .lego__chip.confirm{color:var(--ink-soft); background:var(--panel-2)}
+ .addbtn{background:none; color:var(--ink); border-color:var(--line)}
+ .made{font-family:var(--display); font-size:20px} .made b{color:var(--ink); font-weight:400; font-style:italic}
+ .made.gluten{font-family:var(--cereal); font-style:normal; font-size:12px}
+ footer{margin-top:80px}
+ @media (max-width:780px){
+  .hero{grid-template-columns:1fr; align-items:start} .crate{grid-template-columns:repeat(2,1fr); gap:28px 14px}
+  .rec__comp{font-size:18px} .stat + .stat{padding-left:16px} .stats .stat:nth-child(3){padding-left:0; border-left:0; border-top:1px solid var(--line)}
+ }
 </style></head>
 <body>
  <div class="wrap">
@@ -505,7 +586,8 @@ render();
     ["isn't it ironic,","all you wanna do is smoke chronic?"],
     ["clemenza's sunday sauce,","simmering on the stove"],
     ["captain P, it's 9am,","time to hit Costco before the MBs"],
-    ["hey Will,","I love you (Sade does too)"]
+    ["hey Will,","I love you"],
+    ["willllllllllllllllllllllllll",""]
   ];
   var last=-1;
   try{ last=parseInt(localStorage.getItem('helloIdx'),10); }catch(e){}
@@ -529,7 +611,7 @@ render();
     ["the only bricks","that pay rent"],
     ["still in the box,","still going up"],
     ["plastic bricks,","serious portfolio"],
-    ["hey Will, I love you","more than you love these boxes"]
+    ["hey Will,","I love you"]
   ];
   var last=-1;
   try{ last=parseInt(localStorage.getItem('legoIdx'),10); }catch(e){}
