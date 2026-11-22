@@ -345,6 +345,36 @@ window.sa_event=window.sa_event||function(){var a=[].slice.call(arguments);windo
  @keyframes cardBob{from{transform:translateY(-4px)} to{transform:translateY(4px)}}
  @keyframes cardFlap{from{transform:scaleY(1)} to{transform:scaleY(-.7)}}
  @media (prefers-reduced-motion:reduce){.cardinal{display:none}}
+ /* Color back: Will's purple and teal on the editorial layout */
+ :root{--line:rgba(78,40,153,.16)}
+ body{background-color:#f7f4f8; background-image:radial-gradient(70% 55% at 92% -8%, rgba(122,79,209,.20), transparent 60%),radial-gradient(65% 55% at -6% 104%, rgba(34,182,220,.20), transparent 60%),linear-gradient(135deg, rgba(78,40,153,.05), rgba(28,146,182,.06)); background-attachment:fixed}
+ .mark b{color:var(--purple)}
+ .tabs button::after{height:2px; background:linear-gradient(90deg,var(--purple),var(--teal-bright))}
+ .tabs button[aria-selected="true"]{color:var(--purple)}
+ .eyebrow{color:var(--teal); font-weight:600} .eyebrow::before{background:var(--teal); opacity:.7}
+ h1{color:var(--ink)} h1 em{color:var(--purple)}
+ .spin__tag{color:var(--teal); font-weight:600}
+ .playbtn{background:var(--teal-bright)} .playbtn:hover{background:var(--purple)}
+ .stats{border-top:2px solid var(--purple)}
+ .stat .pp{color:var(--purple)} .stat .tt{color:var(--teal)}
+ .seg button.on{background:var(--purple)} .toggle input:checked{background:var(--purple)}
+ .famhead .fv{color:var(--teal); font-weight:600}
+ .rec__comp{color:var(--ink)} .rec:hover .rec__comp{color:var(--purple)}
+ .rec__frame{outline:0 solid var(--teal-bright); transition:outline-width .2s}
+ .rec:hover .rec__frame{outline-width:3px}
+ .guide h2 em{color:var(--purple)} .guide__head .chev{color:var(--purple)} .gcard h4 .k{color:var(--teal)}
+ .gcard{border-top-color:var(--purple)}
+ .lightbox__scrim{background:rgba(239,232,251,.9)}
+ .lightbox__close{background:var(--purple)}
+ .lightbox__meta #lightboxFoot{color:var(--purple); font-weight:600}
+ .lego__num{color:var(--teal); font-weight:600}
+ .lego__val{color:var(--purple)}
+ .lego.is-ready{border-top:2px solid var(--teal-bright)}
+ .sellbadge{background:var(--teal-bright)}
+ .ready{border-top:2px solid var(--teal-bright)}
+ .ready__val{color:var(--purple)}
+ .made b{color:var(--purple)}
+ .lego__img.noimg{background:linear-gradient(135deg,var(--teal-soft),var(--purple-soft))}
 </style></head>
 <body>
 <div class="cardinal" aria-hidden="true"><svg viewBox="0 0 120 80" width="72" height="48">
