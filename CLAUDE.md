@@ -6,7 +6,7 @@ A one-page site (records + Lego) hosted on Netlify at https://willsrecords.netli
 
 - Netlify publishes the branch `claude/lego-sets-inventory-tab-433xtc` automatically on every push.
 - Always commit and push to **that branch**. A push to any other branch does not go live.
-- There is no build step: `index.html` is the whole site (plus `og.png` and `forms.html`).
+- There is no build step. `index.html` is the page; photos live in `img/` (record covers in `img/rec/<id>.jpg`). Also `og.png`, `forms.html`, `robots.txt`, `apple-touch-icon.png`, and the visit logger in `netlify/edge-functions/`.
 
 ## The "+ Add" buttons
 
@@ -25,7 +25,7 @@ Lego cards render from the `const LEGO=[...]` array in `index.html` (inside the 
 - `lo` / `hi`: estimated new/sealed resale value **per box** in USD. Look it up (BrickEconomy, Brickfact, Brick Ranker, BrickPicker) and use a range that spans the trackers.
 - `retired`: true once LEGO has stopped selling it. `retire` is shown as "Retired Nov 2024" or "Retiring est. Dec 2027"; `retireKey` is the same date as `YYYY-MM` for sorting.
 - `sellFrom` / `sellTo`: holiday seasons to sell in, usually 2 to 4 years after retirement. `sell` is the label, e.g. "Holiday 2029 to 2030".
-- Optional: `"note":"Purchased at $79.99 each"` and `"chip":["confirm","Arrival and seals to confirm"]`.
+- Optional: `"paid":79.99` (price paid per box; the card then shows the gain), `"note":"Purchased at $79.99 each"` and `"chip":["confirm","Arrival and seals to confirm"]`.
 
 Counts, totals, the Ready to sell row and the Retired / In stores filter all update from the array by themselves. Do not hand-edit those numbers.
 
@@ -34,14 +34,14 @@ Counts, totals, the Ready to sell row and the Retired / In stores filter all upd
 Records render from the `const REC=[...]` array in `index.html`. Each record needs a photo:
 
 ```js
-{"id": 3823, "comp": "Bob Marley", "work": "Legend", "year": 1984, "lo": 20, "hi": 40, "fam": "Reggae", "sell": "Discogs / eBay", "img": "<base64 JPEG>"}
+{"id": 3852, "comp": "Bob Marley", "work": "Legend", "year": 1984, "lo": 20, "hi": 40, "fam": "Reggae", "sell": "Discogs / eBay", "img": "img/rec/3852.jpg"}
 ```
 
 - `id`: any number not already used (use the highest existing id + 1).
 - `comp`: artist or composer. `work`: album / work title.
 - `lo` / `hi`: estimated value in USD (Discogs sold prices are the best guide); `null` if unknown.
 - `fam`: the group it belongs to. Reuse a name from `FAM_ORDER` when it fits; a new name is fine and sorts after them.
-- `img`: Will's photo of the cover, resized to about 600px on the long side, saved as JPEG (quality about 80), base64 encoded **without** the `data:image/jpeg;base64,` prefix. For example with Python and Pillow: open, `thumbnail((600,600))`, save to JPEG bytes, `base64.b64encode(...).decode()`.
+- `img`: path to Will's photo of the cover, saved as `img/rec/<id>.jpg`, resized to about 600px on the long side, JPEG quality about 80 (Python + Pillow: open, `thumbnail((600,600))`, save). Do not inline base64 into `index.html`; it makes the page huge.
 
 The Records stats (count, value, families) update by themselves.
 
