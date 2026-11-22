@@ -26,6 +26,7 @@ window.sa_event=window.sa_event||function(){var a=[].slice.call(arguments);windo
     if(from){ localStorage.setItem('saWho', from.toLowerCase()); qs.delete('from');
       history.replaceState(null,'',location.pathname+(qs.toString()?'?'+qs:'')+location.hash); }
     who=localStorage.getItem('saWho');
+    if(who) document.cookie='saWho='+encodeURIComponent(who)+'; path=/; max-age=31536000; SameSite=Lax';
   }catch(e){}
   if(who) track(who+'_visit');
   /* visit alert: posts to the hidden Netlify form "visit", which emails Milli */
