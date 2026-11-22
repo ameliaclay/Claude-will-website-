@@ -337,8 +337,27 @@ window.sa_event=window.sa_event||function(){var a=[].slice.call(arguments);windo
   .hero{grid-template-columns:1fr; align-items:start} .crate{grid-template-columns:repeat(2,1fr); gap:28px 14px}
   .rec__comp{font-size:18px} .stat + .stat{padding-left:16px} .stats .stat:nth-child(3){padding-left:0; border-left:0; border-top:1px solid var(--line)}
  }
+ /* Will's cardinal: flies across once on load */
+ .cardinal{position:fixed; top:18vh; left:0; z-index:90; pointer-events:none; animation:cardFly 5.5s cubic-bezier(.45,.05,.4,1) .6s both}
+ .cardinal svg{display:block; animation:cardBob .5s ease-in-out infinite alternate}
+ .cardinal__wing{transform-origin:62px 40px; animation:cardFlap .18s ease-in-out infinite alternate}
+ @keyframes cardFly{0%{transform:translate(-90px,40px)} 50%{transform:translate(50vw,-30px)} 100%{transform:translate(calc(100vw + 90px),10px)}}
+ @keyframes cardBob{from{transform:translateY(-4px)} to{transform:translateY(4px)}}
+ @keyframes cardFlap{from{transform:scaleY(1)} to{transform:scaleY(-.7)}}
+ @media (prefers-reduced-motion:reduce){.cardinal{display:none}}
 </style></head>
 <body>
+<div class="cardinal" aria-hidden="true"><svg viewBox="0 0 120 80" width="72" height="48">
+  <path d="M8 46 L34 40 L30 52 Z" fill="#a3121b"/>
+  <path d="M4 40 L32 42 L22 50 Z" fill="#8c0f17"/>
+  <ellipse cx="58" cy="44" rx="28" ry="17" fill="#d11f2a"/>
+  <path d="M74 32 Q76 14 88 20 Q84 24 90 26 Q86 28 88 32 Z" fill="#d11f2a"/>
+  <circle cx="84" cy="36" r="13" fill="#d11f2a"/>
+  <path d="M80 31 Q92 30 96 38 Q92 46 82 44 Q78 38 80 31 Z" fill="#1b1416"/>
+  <path d="M93 34 L106 39 L93 43 Z" fill="#f29a2e"/>
+  <circle cx="87" cy="35" r="1.6" fill="#fff"/>
+  <g class="cardinal__wing"><path d="M44 40 Q60 10 78 30 Q66 44 46 46 Z" fill="#a3121b"/></g>
+</svg></div>
  <div class="wrap">
   <header class="topbar">
   <span class="mark">Will Z's <b>Collection</b></span>
