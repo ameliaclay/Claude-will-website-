@@ -375,6 +375,28 @@ window.sa_event=window.sa_event||function(){var a=[].slice.call(arguments);windo
  .ready__val{color:var(--purple)}
  .made b{color:var(--purple)}
  .lego__img.noimg{background:linear-gradient(135deg,var(--teal-soft),var(--purple-soft))}
+ /* Hybrid: Lego tab in quiet utility */
+ #panel-lego .lego-hero{padding:clamp(28px,4vw,48px) 0 20px}
+ #panel-lego .lego-hero h1{font-size:clamp(38px,5vw,60px); margin-bottom:14px}
+ #panel-lego .stat b{font-family:var(--cereal); font-weight:600; font-size:clamp(20px,2.4vw,28px); letter-spacing:-.02em}
+ #panel-lego .stat{padding:16px 0} #panel-lego .stat + .stat{padding-left:20px}
+ #panel-lego .famhead h3,#panel-lego .ready__head h3{font-family:var(--cereal); font-weight:600; font-size:18px; letter-spacing:-.01em}
+ #panel-lego .legogrid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:14px}
+ #panel-lego .lego{border:1px solid var(--line); border-radius:8px; padding:12px; background:rgba(255,255,255,.55); gap:4px}
+ #panel-lego .lego.is-ready{border:1px solid var(--teal-bright); box-shadow:inset 0 2px 0 var(--teal-bright)}
+ #panel-lego .lego__img{aspect-ratio:16/10; margin:0 0 6px; border-radius:5px}
+ #panel-lego .lego__img img{padding:8px}
+ #panel-lego .lego__name{font-family:var(--cereal); font-weight:600; font-size:13.5px; line-height:1.3}
+ #panel-lego .lego__num,#panel-lego .lego .pill{font-size:11.5px; font-variant-numeric:tabular-nums}
+ #panel-lego .lego__val{font-size:14px; font-variant-numeric:tabular-nums}
+ #panel-lego .lego__each,#panel-lego .lego__note{font-size:11px}
+ #panel-lego .lego__dates{margin-top:6px; padding-top:8px; gap:6px}
+ #panel-lego .lego__dates dt{font-size:9.5px} #panel-lego .lego__dates dd{font-size:11.5px; font-variant-numeric:tabular-nums}
+ #panel-lego .lego__chip{font-size:10px}
+ #panel-lego .ready{padding:14px 0} #panel-lego .ready__list li{font-size:13px; padding:8px 0}
+ #panel-lego .ready__val{font-variant-numeric:tabular-nums}
+ #panel-lego .sellbadge{font-size:9.5px; padding:3px 8px; top:6px; left:6px}
+ @media (max-width:780px){#panel-lego .legogrid{grid-template-columns:repeat(2,1fr); gap:10px}}
 </style></head>
 <body>
 <div class="cardinal" aria-hidden="true"><svg viewBox="0 0 120 80" width="72" height="48">
