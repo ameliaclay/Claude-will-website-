@@ -929,13 +929,11 @@ render();
   var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   var perched = false, flying = false;
 
-  /* feet point: the stats bar's purple top border, right above the Est. total value number */
+  /* feet point: the stats bar's purple top border, at its far right corner (above Families) */
   function spot(){
     var r = perch.getBoundingClientRect();
     if(!r.width) return null;
-    var v = perch.querySelector('.stat:nth-child(2) b'), vr = v ? v.getBoundingClientRect() : null;
-    var x = vr && vr.width ? vr.left + vr.width / 2 : r.left + r.width / 2;
-    return {x: x + scrollX, y: r.top + scrollY};
+    return {x: r.right + scrollX - 26, y: r.top + scrollY};
   }
   function place(x, y, rot){
     bird.style.transform = 'translate(' + x + 'px,' + y + 'px)' + (rot ? ' rotate(' + rot + 'deg)' : '');
