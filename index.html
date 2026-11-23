@@ -337,14 +337,6 @@ window.sa_event=window.sa_event||function(){var a=[].slice.call(arguments);windo
   .hero{grid-template-columns:1fr; align-items:start} .crate{grid-template-columns:repeat(2,1fr); gap:28px 14px}
   .rec__comp{font-size:18px} .stat + .stat{padding-left:16px} .stats .stat:nth-child(3){padding-left:0; border-left:0; border-top:1px solid var(--line)}
  }
- /* Will's cardinal: flies across once on load */
- .cardinal{position:fixed; top:18vh; left:0; z-index:90; pointer-events:none; animation:cardFly 5.5s cubic-bezier(.45,.05,.4,1) .6s both}
- .cardinal svg{display:block; animation:cardBob .5s ease-in-out infinite alternate}
- .cardinal__wing{transform-origin:62px 40px; animation:cardFlap .18s ease-in-out infinite alternate}
- @keyframes cardFly{0%{transform:translate(-90px,40px)} 50%{transform:translate(50vw,-30px)} 100%{transform:translate(calc(100vw + 90px),10px)}}
- @keyframes cardBob{from{transform:translateY(-4px)} to{transform:translateY(4px)}}
- @keyframes cardFlap{from{transform:scaleY(1)} to{transform:scaleY(-.7)}}
- @media (prefers-reduced-motion:reduce){.cardinal{display:none}}
  /* Color back: Will's purple and teal on the editorial layout */
  :root{--line:rgba(78,40,153,.16)}
  body{background-color:#f7f4f8; background-image:radial-gradient(70% 55% at 92% -8%, rgba(122,79,209,.20), transparent 60%),radial-gradient(65% 55% at -6% 104%, rgba(34,182,220,.20), transparent 60%),linear-gradient(135deg, rgba(78,40,153,.05), rgba(28,146,182,.06)); background-attachment:fixed}
@@ -409,19 +401,13 @@ window.sa_event=window.sa_event||function(){var a=[].slice.call(arguments);windo
  .recnone{color:var(--muted); padding:30px 0}
  .lego__gain{font-size:11.5px; font-weight:600; color:var(--teal)} .lego__gain.down{color:#b5161f} .lego__gain.even{color:var(--muted)}
  @media (max-width:780px){.recsearch{max-width:none; width:100%; order:3}}
+ /* Records stats: labels share one baseline row, numbers bottom-aligned */
+ #panel-records .stats .stat{display:flex; flex-direction:column; justify-content:flex-end}
+ #panel-records .stats .stat b{display:flex; align-items:flex-end; min-height:clamp(30px,4vw,48px); white-space:nowrap}
+ #panel-records .stats .stat:nth-child(2) b{font-size:clamp(1.6rem,7vw,2.75rem)}
+ @media (max-width:780px){#panel-records .stats .stat b{min-height:22px}}
 </style></head>
 <body>
-<div class="cardinal" aria-hidden="true"><svg viewBox="0 0 120 80" width="72" height="48">
-  <path d="M8 46 L34 40 L30 52 Z" fill="#a3121b"/>
-  <path d="M4 40 L32 42 L22 50 Z" fill="#8c0f17"/>
-  <ellipse cx="58" cy="44" rx="28" ry="17" fill="#d11f2a"/>
-  <path d="M74 32 Q76 14 88 20 Q84 24 90 26 Q86 28 88 32 Z" fill="#d11f2a"/>
-  <circle cx="84" cy="36" r="13" fill="#d11f2a"/>
-  <path d="M80 31 Q92 30 96 38 Q92 46 82 44 Q78 38 80 31 Z" fill="#1b1416"/>
-  <path d="M93 34 L106 39 L93 43 Z" fill="#f29a2e"/>
-  <circle cx="87" cy="35" r="1.6" fill="#fff"/>
-  <g class="cardinal__wing"><path d="M44 40 Q60 10 78 30 Q66 44 46 46 Z" fill="#a3121b"/></g>
-</svg></div>
  <div class="wrap">
   <header class="topbar">
   <span class="mark">Will Z's <b>Collection</b></span>
@@ -865,6 +851,144 @@ render();
     else { t.select(); document.execCommand('copy'); done(); }
   });
   document.querySelectorAll('.addbtn').forEach(function(b){ b.hidden=false; b.addEventListener('click',function(){open(b.dataset.add);}); });
+})();
+</script>
+<!-- Will's cardinal: swoops in from the left, then perches on the stats bar -->
+<style>
+ .cardinal{position:absolute; top:0; left:0; width:0; height:0; z-index:50; pointer-events:none; visibility:hidden}
+ .cardinal.is-on{visibility:visible}
+ .cardinal svg{position:absolute; display:block; overflow:visible}
+ .cardinal__fly{left:-50px; top:-34px; width:96px; height:48px}
+ .cardinal__perch{left:-21px; top:-44px; width:42px; height:63px; opacity:0}
+ .cardinal.is-perched .cardinal__fly{opacity:0}
+ .cardinal.is-perched .cardinal__perch{opacity:1; animation:cdHop .55s cubic-bezier(.3,.7,.4,1) both}
+ .cardinal__wing{transform-box:view-box; transform-origin:76px 31px; animation:cdFlap .16s ease-in-out infinite alternate}
+ .cardinal__wing--far{animation-delay:-.04s}
+ .cardinal.is-gliding .cardinal__wing{animation:none; transform:scaleY(.18)}
+ .cardinal.is-landing .cardinal__wing{animation-duration:.09s}
+ .cardinal__head{transform-box:view-box; transform-origin:30px 30px; transition:transform .35s ease}
+ .cardinal.is-tilt .cardinal__head{transform:rotate(-14deg)}
+ .cardinal.is-tilt-r .cardinal__head{transform:rotate(12deg)}
+ .cardinal__tail{transform-box:view-box; transform-origin:30px 57px}
+ .cardinal.is-flick .cardinal__tail{animation:cdFlick .5s ease-in-out}
+ @keyframes cdFlap{from{transform:scaleY(1)} to{transform:scaleY(-.75)}}
+ @keyframes cdHop{0%{transform:translateY(-7px)} 45%{transform:translateY(0) scaleY(.92)} 70%{transform:translateY(-2px)} 100%{transform:none}}
+ @keyframes cdFlick{0%,100%{transform:none} 30%{transform:rotate(-9deg)} 60%{transform:rotate(6deg)}}
+ @media (prefers-reduced-motion:reduce){.cardinal *{animation:none !important; transition:none !important}}
+</style>
+<div class="cardinal" id="cardinal" aria-hidden="true">
+ <svg class="cardinal__fly" viewBox="0 0 140 70">
+  <g class="cardinal__wing cardinal__wing--far"><path d="M78 31 Q66 6 42 1 Q52 12 54 20 Q60 29 72 35 Z" fill="#7e0c14"/></g>
+  <path d="M54 34 L6 27 Q2 31 6 35 L4 39 L54 41 Z" fill="#9b111a"/>
+  <path d="M50 36 L12 32 M50 38 L10 37" stroke="#6e0a11" stroke-width=".9" fill="none"/>
+  <path d="M48 37 Q60 25 84 27 Q98 29 102 36 Q95 47 76 47 Q58 47 48 37 Z" fill="#c8102e"/>
+  <path d="M62 42 Q76 47 92 41 Q84 46 72 46 Q66 45 62 42 Z" fill="#e0454b" opacity=".7"/>
+  <path d="M93 26 L95 8 L105 21 Z" fill="#c8102e"/>
+  <path d="M95 13 L99 22" stroke="#8f0e17" stroke-width=".8"/>
+  <circle cx="101" cy="30" r="9.5" fill="#c8102e"/>
+  <path d="M100 24 Q108 23 112 29 Q110 37 101 37 Q97 31 100 24 Z" fill="#17110f"/>
+  <path d="M108 26.5 L120 31 L108 35.5 Q106 31 108 26.5 Z" fill="#f08a24"/>
+  <path d="M108 31 L119 31" stroke="#c4651a" stroke-width=".8"/>
+  <circle cx="104" cy="28.5" r="1.9" fill="#000"/><circle cx="104.6" cy="27.9" r=".6" fill="#fff"/>
+  <path d="M72 46 L68 51 M78 46 L75 51" stroke="#5a3a2a" stroke-width="1.4" stroke-linecap="round"/>
+  <g class="cardinal__wing">
+   <path d="M80 31 Q68 4 40 0 Q50 11 52 19 Q58 30 72 37 Q78 36 80 31 Z" fill="#a3121b"/>
+   <path d="M76 31 Q64 12 46 4 M72 33 Q62 18 49 10 M68 35 Q60 24 51 17 M64 36 Q58 29 53 23" stroke="#6e0a11" stroke-width="1" fill="none"/>
+  </g>
+ </svg>
+ <svg class="cardinal__perch" viewBox="0 0 60 90">
+  <g class="cardinal__tail">
+   <path d="M26 54 L22.5 89 L30 85.5 L37.5 89 L34 54 Z" fill="#9b111a"/>
+   <path d="M30 58 L30 85 M27 60 L25 86 M33 60 L35 86" stroke="#6e0a11" stroke-width=".8" fill="none"/>
+  </g>
+  <path d="M30 24 Q46 30 44 47 Q42 61 30 63 Q18 61 16 47 Q14 30 30 24 Z" fill="#c8102e"/>
+  <ellipse cx="30" cy="47" rx="8.5" ry="12" fill="#e0454b" opacity=".6"/>
+  <path d="M17 33 Q11 47 19 61 Q23 49 22.5 37 Z" fill="#a3121b"/>
+  <path d="M43 33 Q49 47 41 61 Q37 49 37.5 37 Z" fill="#a3121b"/>
+  <path d="M17.5 40 Q16 50 19 58 M42.5 40 Q44 50 41 58" stroke="#6e0a11" stroke-width=".9" fill="none"/>
+  <path d="M25.5 61 L25.5 64 M34.5 61 L34.5 64 M23.5 64 L27.5 64 M32.5 64 L36.5 64" stroke="#4a2e22" stroke-width="1.4" stroke-linecap="round"/>
+  <g class="cardinal__head">
+   <path d="M23.5 17 Q27 6 30 1 Q33 6 36.5 17 Z" fill="#c8102e"/>
+   <path d="M30 4 L30 15" stroke="#8f0e17" stroke-width=".8"/>
+   <circle cx="30" cy="22" r="11" fill="#c8102e"/>
+   <path d="M20.5 19 Q30 16 39.5 19 Q38.5 31 30 33.5 Q21.5 31 20.5 19 Z" fill="#17110f"/>
+   <circle cx="25.5" cy="21.5" r="1.9" fill="#000"/><circle cx="26.1" cy="20.9" r=".6" fill="#fff"/>
+   <circle cx="34.5" cy="21.5" r="1.9" fill="#000"/><circle cx="35.1" cy="20.9" r=".6" fill="#fff"/>
+   <path d="M25.5 23.5 L34.5 23.5 L30 31 Z" fill="#f08a24"/>
+   <path d="M26.5 26 L33.5 26" stroke="#c4651a" stroke-width=".8"/>
+  </g>
+ </svg>
+</div>
+<script>
+(function(){
+  var PERCH_SELECTOR = '.stats'; /* the Records stats bar (first .stats on the page) */
+  var bird = document.getElementById('cardinal');
+  var perch = document.querySelector(PERCH_SELECTOR);
+  if(!bird || !perch) return;
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var perched = false, flying = false;
+
+  /* feet point: top border of the stats bar, near its right corner (above Families) */
+  function spot(){
+    var r = perch.getBoundingClientRect();
+    if(!r.width) return null;
+    return {x: r.right + scrollX - 26, y: r.top + scrollY};
+  }
+  function place(x, y, rot){
+    bird.style.transform = 'translate(' + x + 'px,' + y + 'px)' + (rot ? ' rotate(' + rot + 'deg)' : '');
+  }
+  function pin(){
+    var s = spot();
+    if(!s){ bird.classList.remove('is-on'); return; }
+    if(perched){ bird.classList.add('is-on'); place(s.x, s.y); }
+  }
+  function land(){
+    flying = false; perched = true;
+    bird.classList.remove('is-gliding', 'is-landing');
+    bird.classList.add('is-perched');
+    pin();
+    if(!reduce) idle();
+  }
+  function idle(){
+    setTimeout(function step(){
+      var r = Math.random();
+      var c = r < .4 ? 'is-tilt' : r < .7 ? 'is-tilt-r' : 'is-flick';
+      bird.classList.add(c);
+      setTimeout(function(){ bird.classList.remove(c); }, c === 'is-flick' ? 520 : 1300);
+      setTimeout(step, 3500 + Math.random() * 4500);
+    }, 2200);
+  }
+  function bez(a, b, c, d, t){ var u = 1 - t; return u*u*u*a + 3*u*u*t*b + 3*u*t*t*c + t*t*t*d; }
+  function fly(){
+    var s = spot();
+    if(!s){ land(); return; }
+    var W = document.documentElement.clientWidth;
+    var p0 = {x: -80, y: s.y - 210}, p1 = {x: W * .28, y: s.y + 70}, p2 = {x: W * .62, y: s.y - 120};
+    var dur = 3400, t0 = null, lastX = p0.x, lastY = p0.y;
+    flying = true; bird.classList.add('is-on');
+    function frame(now){
+      if(t0 === null) t0 = now;
+      var k = Math.min(1, (now - t0) / dur);
+      var t = 1 - Math.pow(1 - k, 2.2);           /* ease out: fast swoop, slow touchdown */
+      var e = spot() || s;                         /* follow the perch if layout moves */
+      var x = bez(p0.x, p1.x, p2.x, e.x, t), y = bez(p0.y, p1.y, p2.y, e.y, t);
+      var rot = Math.max(-22, Math.min(22, Math.atan2(y - lastY, Math.max(.5, x - lastX)) * 57.3));
+      lastX = x; lastY = y;
+      bird.classList.toggle('is-gliding', k > .5 && k < .78);
+      bird.classList.toggle('is-landing', k >= .78);
+      place(x, y, rot * .7);
+      if(k < 1) requestAnimationFrame(frame); else land();
+    }
+    requestAnimationFrame(frame);
+  }
+
+  addEventListener('resize', pin);
+  addEventListener('load', pin);
+  if(window.ResizeObserver){ var ro = new ResizeObserver(pin); ro.observe(perch); ro.observe(document.body); }
+
+  if(reduce) land();
+  else if(document.readyState === 'complete') setTimeout(fly, 500);
+  else addEventListener('load', function(){ setTimeout(fly, 500); });
 })();
 </script>
 </body></html>
