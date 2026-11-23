@@ -404,7 +404,8 @@ window.sa_event=window.sa_event||function(){var a=[].slice.call(arguments);windo
  /* Records stats: labels share one baseline row, numbers bottom-aligned */
  #panel-records .stats .stat{display:flex; flex-direction:column; justify-content:flex-end}
  #panel-records .stats .stat b{display:flex; align-items:flex-end; min-height:clamp(30px,4vw,48px); white-space:nowrap}
- #panel-records .stats .stat:nth-child(2) b{font-size:clamp(1.6rem,7vw,2.75rem)}
+ #panel-records .stats .stat:nth-child(2) b{font-size:clamp(1.1rem,4.6vw,2.75rem)}
+ #panel-records .stats .stat span{white-space:nowrap}
  @media (max-width:780px){#panel-records .stats .stat b{min-height:22px}}
 </style></head>
 <body>
@@ -861,19 +862,19 @@ render();
  .cardinal__fly{left:-50px; top:-34px; width:96px; height:48px}
  .cardinal__perch{left:-21px; top:-44px; width:42px; height:63px; opacity:0}
  .cardinal.is-perched .cardinal__fly{opacity:0}
- .cardinal.is-perched .cardinal__perch{opacity:1; animation:cdHop .55s cubic-bezier(.3,.7,.4,1) both}
+ .cardinal.is-perched .cardinal__perch{opacity:1; animation:cdHop .7s ease-out .15s both}
  .cardinal__wing{transform-box:view-box; transform-origin:76px 31px; animation:cdFlap .16s ease-in-out infinite alternate}
  .cardinal__wing--far{animation-delay:-.04s}
  .cardinal.is-gliding .cardinal__wing{animation:none; transform:scaleY(.18)}
  .cardinal.is-landing .cardinal__wing{animation-duration:.09s}
  .cardinal__head{transform-box:view-box; transform-origin:30px 30px; transition:transform .35s ease}
- .cardinal.is-tilt .cardinal__head{transform:rotate(-14deg)}
- .cardinal.is-tilt-r .cardinal__head{transform:rotate(12deg)}
+ .cardinal.is-tilt .cardinal__head{transform:rotate(-20deg)}
+ .cardinal.is-tilt-r .cardinal__head{transform:rotate(18deg)}
  .cardinal__tail{transform-box:view-box; transform-origin:30px 57px}
  .cardinal.is-flick .cardinal__tail{animation:cdFlick .5s ease-in-out}
  @keyframes cdFlap{from{transform:scaleY(1)} to{transform:scaleY(-.75)}}
- @keyframes cdHop{0%{transform:translateY(-7px)} 45%{transform:translateY(0) scaleY(.92)} 70%{transform:translateY(-2px)} 100%{transform:none}}
- @keyframes cdFlick{0%,100%{transform:none} 30%{transform:rotate(-9deg)} 60%{transform:rotate(6deg)}}
+ @keyframes cdHop{0%{transform:none} 30%{transform:translateY(-9px)} 55%{transform:translateY(0) scaleY(.9)} 75%{transform:translateY(-3px)} 100%{transform:none}}
+ @keyframes cdFlick{0%,100%{transform:none} 25%{transform:rotate(-16deg)} 55%{transform:rotate(10deg)} 80%{transform:rotate(-4deg)}}
  @media (prefers-reduced-motion:reduce){.cardinal *{animation:none !important; transition:none !important}}
 </style>
 <div class="cardinal" id="cardinal" aria-hidden="true">
@@ -928,11 +929,13 @@ render();
   var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   var perched = false, flying = false;
 
-  /* feet point: top border of the stats bar, near its right corner (above Families) */
+  /* feet point: the stats bar's purple top border, right above the Est. total value number */
   function spot(){
     var r = perch.getBoundingClientRect();
     if(!r.width) return null;
-    return {x: r.right + scrollX - 26, y: r.top + scrollY};
+    var v = perch.querySelector('.stat:nth-child(2) b'), vr = v ? v.getBoundingClientRect() : null;
+    var x = vr && vr.width ? vr.left + vr.width / 2 : r.left + r.width / 2;
+    return {x: x + scrollX, y: r.top + scrollY};
   }
   function place(x, y, rot){
     bird.style.transform = 'translate(' + x + 'px,' + y + 'px)' + (rot ? ' rotate(' + rot + 'deg)' : '');
@@ -955,27 +958,28 @@ render();
       var c = r < .4 ? 'is-tilt' : r < .7 ? 'is-tilt-r' : 'is-flick';
       bird.classList.add(c);
       setTimeout(function(){ bird.classList.remove(c); }, c === 'is-flick' ? 520 : 1300);
-      setTimeout(step, 3500 + Math.random() * 4500);
-    }, 2200);
+      setTimeout(step, 2500 + Math.random() * 3000);
+    }, 1200);
   }
   function bez(a, b, c, d, t){ var u = 1 - t; return u*u*u*a + 3*u*u*t*b + 3*u*t*t*c + t*t*t*d; }
   function fly(){
     var s = spot();
     if(!s){ land(); return; }
     var W = document.documentElement.clientWidth;
-    var p0 = {x: -80, y: s.y - 210}, p1 = {x: W * .28, y: s.y + 70}, p2 = {x: W * .62, y: s.y - 120};
-    var dur = 3400, t0 = null, lastX = p0.x, lastY = p0.y;
+    var top = Math.max(scrollY + 70, s.y - 300);
+    var p0 = {x: -80, y: top}, p1 = {x: W * .35, y: top - 30}, p2 = {x: W * .55, y: s.y - 110};
+    var dur = 4200, t0 = null, lastX = p0.x, lastY = p0.y;
     flying = true; bird.classList.add('is-on');
     function frame(now){
       if(t0 === null) t0 = now;
       var k = Math.min(1, (now - t0) / dur);
-      var t = 1 - Math.pow(1 - k, 2.2);           /* ease out: fast swoop, slow touchdown */
+      var t = 1 - Math.pow(1 - k, 1.7);           /* ease out: steady flight, gentle touchdown */
       var e = spot() || s;                         /* follow the perch if layout moves */
       var x = bez(p0.x, p1.x, p2.x, e.x, t), y = bez(p0.y, p1.y, p2.y, e.y, t);
       var rot = Math.max(-22, Math.min(22, Math.atan2(y - lastY, Math.max(.5, x - lastX)) * 57.3));
       lastX = x; lastY = y;
-      bird.classList.toggle('is-gliding', k > .5 && k < .78);
-      bird.classList.toggle('is-landing', k >= .78);
+      bird.classList.toggle('is-gliding', k > .45 && k < .75);
+      bird.classList.toggle('is-landing', k >= .75);
       place(x, y, rot * .7);
       if(k < 1) requestAnimationFrame(frame); else land();
     }
@@ -986,9 +990,17 @@ render();
   addEventListener('load', pin);
   if(window.ResizeObserver){ var ro = new ResizeObserver(pin); ro.observe(perch); ro.observe(document.body); }
 
+  /* fly in only once the stats bar is on screen, so it can be seen (phones scroll to it) */
+  function start(){
+    if(!window.IntersectionObserver){ setTimeout(fly, 400); return; }
+    var io = new IntersectionObserver(function(es){
+      if(es[0].isIntersecting && es[0].intersectionRatio > 0){ io.disconnect(); setTimeout(fly, 350); }
+    }, {threshold: .6});
+    io.observe(perch);
+  }
   if(reduce) land();
-  else if(document.readyState === 'complete') setTimeout(fly, 500);
-  else addEventListener('load', function(){ setTimeout(fly, 500); });
+  else if(document.readyState === 'complete') start();
+  else addEventListener('load', start);
 })();
 </script>
 </body></html>
