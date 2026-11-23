@@ -672,7 +672,7 @@ render();
   try{ localStorage.setItem('helloIdx', idx); }catch(e){}
   var H=HELLOS[idx];
   var el=document.getElementById("hero-line");
-  if(el) el.innerHTML=H[0]+"<br><em>"+H[1]+"</em>";
+  if(el) el.innerHTML=H[1] ? H[0]+"<br><em>"+H[1]+"</em>" : "<em>"+H[0]+"</em>";
 })();
 
 /* Lego headline: a different joke on every visit */
