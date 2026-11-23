@@ -854,7 +854,7 @@ render();
   document.querySelectorAll('.addbtn').forEach(function(b){ b.hidden=false; b.addEventListener('click',function(){open(b.dataset.add);}); });
 })();
 </script>
-<!-- Will's cardinal: swoops in from the left, then perches on the stats bar -->
+<!-- Will's cardinal: flies in from the left, over the record, then down to perch on the stats bar -->
 <style>
  .cardinal{position:absolute; top:0; left:0; width:0; height:0; z-index:50; pointer-events:none; visibility:hidden}
  .cardinal.is-on{visibility:visible}
@@ -935,8 +935,8 @@ render();
     if(!r.width) return null;
     return {x: r.right + scrollX - 26, y: r.top + scrollY};
   }
-  function place(x, y, rot){
-    bird.style.transform = 'translate(' + x + 'px,' + y + 'px)' + (rot ? ' rotate(' + rot + 'deg)' : '');
+  function place(x, y, rot, flip){
+    bird.style.transform = 'translate(' + x + 'px,' + y + 'px)' + (rot ? ' rotate(' + rot + 'deg)' : '') + (flip ? ' scaleX(-1)' : '');
   }
   function pin(){
     var s = spot();
@@ -959,26 +959,71 @@ render();
       setTimeout(step, 2500 + Math.random() * 3000);
     }, 1200);
   }
-  function bez(a, b, c, d, t){ var u = 1 - t; return u*u*u*a + 3*u*u*t*b + 3*u*t*t*c + t*t*t*d; }
+  /* Catmull-Rom point on a list of waypoints, u in 0..1 per segment */
+  function cr(p0, p1, p2, p3, u){
+    var u2 = u*u, u3 = u2*u;
+    function f(a, b, c, d){ return .5*(2*b + (-a + c)*u + (2*a - 5*b + 4*c - d)*u2 + (-a + 3*b - 3*c + d)*u3); }
+    return {x: f(p0.x, p1.x, p2.x, p3.x), y: f(p0.y, p1.y, p2.y, p3.y)};
+  }
+  function route(s){
+    var W = document.documentElement.clientWidth;
+    var rec = document.querySelector('#panel-records .vinyl');
+    var rr = rec && rec.getBoundingClientRect();
+    var pts;
+    if(rr && rr.width){
+      var L = rr.left + scrollX, T = rr.top + scrollY, w = rr.width, h = rr.height;
+      var x3 = Math.min(Math.max(L + w + 40, L + w*.9), s.x - 40);
+      pts = [
+        {x: -90, y: T + h*.42},                         /* enters from the left */
+        {x: Math.max(20, L + w*.2), y: T + h*.24},       /* drifts up over the record */
+        {x: L + w*.7, y: T + h*.16},
+        {x: Math.max(x3, L + w*.75), y: T + h*.38},
+        {x: Math.max(30, s.x - Math.min(W*.4, 260)), y: (T + h*.4 + s.y) / 2},  /* lazy swing out on the way down */
+        {x: s.x - Math.min(70, W*.15), y: s.y - 70},     /* then glides back in */
+        {x: s.x, y: s.y}                                 /* and lands on the perch */
+      ];
+    } else {
+      pts = [{x: -90, y: s.y - 260}, {x: W*.35, y: s.y - 230}, {x: W*.6, y: s.y - 110}, {x: s.x, y: s.y}];
+    }
+    var path = [], n = pts.length;
+    for(var j = 0; j < n - 1; j++){
+      var a = pts[Math.max(0, j-1)], b = pts[j], c = pts[j+1], d = pts[Math.min(n-1, j+2)];
+      for(var k = 0; k < 40; k++) path.push(cr(a, b, c, d, k/40));
+    }
+    path.push(pts[n-1]);
+    var len = [0];
+    for(var m = 1; m < path.length; m++) len.push(len[m-1] + Math.hypot(path[m].x - path[m-1].x, path[m].y - path[m-1].y));
+    return {path: path, len: len, total: len[len.length-1], descent: len[(n-3)*40] / len[len.length-1]};
+  }
+  function at(r, dist){
+    var lo = 0, hi = r.len.length - 1;
+    while(hi - lo > 1){ var mid = (lo + hi) >> 1; if(r.len[mid] < dist) lo = mid; else hi = mid; }
+    var seg = r.len[hi] - r.len[lo] || 1, f = (dist - r.len[lo]) / seg;
+    return {x: r.path[lo].x + (r.path[hi].x - r.path[lo].x)*f, y: r.path[lo].y + (r.path[hi].y - r.path[lo].y)*f,
+            a: Math.atan2(r.path[hi].y - r.path[lo].y, r.path[hi].x - r.path[lo].x)};
+  }
   function fly(){
     var s = spot();
     if(!s){ land(); return; }
-    var W = document.documentElement.clientWidth;
-    var top = Math.max(scrollY + 70, s.y - 300);
-    var p0 = {x: -80, y: top}, p1 = {x: W * .35, y: top - 30}, p2 = {x: W * .55, y: s.y - 110};
-    var dur = 4200, t0 = null, lastX = p0.x, lastY = p0.y;
+    var r = route(s);
+    var dur = Math.min(8000, Math.max(5200, r.total * 6)), t0 = null;
     flying = true; bird.classList.add('is-on');
     function frame(now){
       if(t0 === null) t0 = now;
-      var k = Math.min(1, (now - t0) / dur);
-      var t = 1 - Math.pow(1 - k, 1.7);           /* ease out: steady flight, gentle touchdown */
-      var e = spot() || s;                         /* follow the perch if layout moves */
-      var x = bez(p0.x, p1.x, p2.x, e.x, t), y = bez(p0.y, p1.y, p2.y, e.y, t);
-      var rot = Math.max(-22, Math.min(22, Math.atan2(y - lastY, Math.max(.5, x - lastX)) * 57.3));
-      lastX = x; lastY = y;
-      bird.classList.toggle('is-gliding', k > .45 && k < .75);
-      bird.classList.toggle('is-landing', k >= .75);
-      place(x, y, rot * .7);
+      var el = now - t0, k = Math.min(1, el / dur);
+      var e = 1 - Math.pow(1 - k, 1.5);               /* easy cruise, gentle touchdown */
+      var p = at(r, r.total * e), cur = spot() || s;
+      var dx = (cur.x - s.x) * e, dy = (cur.y - s.y) * e; /* follow the perch if layout moves */
+      var bob = e < r.descent ? Math.sin(el / 260) * 5 : 0;   /* casual bobbing while cruising */
+      var cruising = e < r.descent;
+      /* lazy flight: a few flaps, then a short glide, while over the record */
+      bird.classList.toggle('is-gliding', cruising ? (el % 1500) > 950 : e < .93);
+      bird.classList.toggle('is-landing', !cruising && e >= .93);
+      /* face the way it is flying, nose following the path */
+      var dirX = Math.cos(p.a), dirY = Math.sin(p.a), flip = dirX < -.05;
+      var ang = Math.atan2(dirY, Math.abs(dirX)) * 57.3;   /* nose down when descending */
+      var rot = Math.max(-24, Math.min(24, flip ? -ang : ang)) * .7;
+      place(p.x + dx, p.y + dy + bob, rot, flip);
       if(k < 1) requestAnimationFrame(frame); else land();
     }
     requestAnimationFrame(frame);
